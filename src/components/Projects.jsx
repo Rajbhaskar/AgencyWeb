@@ -20,7 +20,7 @@ const projects = [
     liveLink: "https://seetimaarfilms.com"
   },
   {
-    title: "Seeti Maar Films Theatrical theme video ",
+    title: "Seeti Maar Films Theatrical theme video",
     image: seetimaar1, 
     liveLink: "https://www.instagram.com/reel/DLP2c5czlQO/?igsh=d3NsbW81cGdmN2t3"
   },
@@ -86,11 +86,78 @@ const buttonStyles = {
   `,
 };
 
-// Carousel card component to reduce duplication
-const CarouselCard = React.memo(({ project, position, isMobile = false }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
+// Optimized Image Component with better error handling and loading
+const OptimizedImage = React.memo(({ src, alt, className, style }) => {
+  const [imageState, setImageState] = useState({
+    loaded: false,
+    error: false,
+    src: src
+  });
 
+  // Preload images for better UX
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    
+    const handleLoad = () => {
+      setImageState(prev => ({ ...prev, loaded: true, error: false }));
+    };
+    
+    const handleError = () => {
+      console.warn(`Failed to load image: ${src}`);
+      setImageState(prev => ({ ...prev, error: true, loaded: true }));
+    };
+
+    img.addEventListener('load', handleLoad);
+    img.addEventListener('error', handleError);
+    
+    return () => {
+      img.removeEventListener('load', handleLoad);
+      img.removeEventListener('error', handleError);
+    };
+  }, [src]);
+
+  if (imageState.error) {
+    return (
+      <div className={`${className} bg-gradient-to-br from-gray-700 to-gray-800 flex flex-col items-center justify-center`} style={style}>
+        <div className="text-4xl mb-2">🎬</div>
+        <div className="text-gray-300 text-sm text-center px-4">
+          <div className="font-medium">Preview</div>
+          <div className="text-xs mt-1 opacity-75">Image loading failed</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-full">
+      {/* Loading skeleton */}
+      {!imageState.loaded && (
+        <div className={`absolute inset-0 ${className} bg-gray-800 animate-pulse flex items-center justify-center`} style={style}>
+          <div className="text-gray-400 text-sm">Loading...</div>
+        </div>
+      )}
+      
+      {/* Actual image */}
+      <img
+        src={src}
+        alt={alt}
+        className={`${className} transition-opacity duration-300 ${
+          imageState.loaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={style}
+        loading={imageState.loaded ? "eager" : "lazy"}
+        onLoad={() => setImageState(prev => ({ ...prev, loaded: true, error: false }))}
+        onError={() => setImageState(prev => ({ ...prev, error: true, loaded: true }))}
+      />
+    </div>
+  );
+});
+
+OptimizedImage.displayName = 'OptimizedImage';
+
+// Carousel card component - optimized for performance
+const CarouselCard = React.memo(({ project, position, isMobile = false }) => {
   const cardStyle = useMemo(() => ({
     transform: isMobile 
       ? `translateX(${position * 100}%) scale(${1 - position * 0.05})`
@@ -100,6 +167,9 @@ const CarouselCard = React.memo(({ project, position, isMobile = false }) => {
     ...cardStyles,
   }), [position, isMobile]);
 
+  // Only render images for visible cards to improve performance
+  const shouldRenderImage = position <= (isMobile ? 1 : 2);
+
   return (
     <div
       className={`absolute ${isMobile ? 'w-full' : 'w-2/3'} h-full backdrop-blur-md rounded-xl ${isMobile ? 'p-4' : 'p-6'} transition-all duration-500 hover:shadow-[#814AC8]/30 flex-shrink-0`}
@@ -108,35 +178,21 @@ const CarouselCard = React.memo(({ project, position, isMobile = false }) => {
       aria-label={`Project: ${project.title}`}
     >
       <div className="flex flex-col h-full">
-         {/* Project Image with lazy loading and error handling */}
-         <div className={`relative w-full ${isMobile ? 'h-48 mb-4' : 'h-56 mb-6'} rounded-t-lg overflow-hidden`}>
-           {!imageError ? (
-             <>
-               {!imageLoaded && (
-                 <div className="absolute inset-0 bg-gray-800 animate-pulse flex items-center justify-center">
-                   <div className="text-gray-400 text-sm">Loading...</div>
-                 </div>
-               )}
-               <img
-                 src={project.image}
-                 alt={`Screenshot of ${project.title} project`}
-                 className={`w-full h-full object-contain ${
-                   imageLoaded ? 'opacity-100' : 'opacity-0'
-                 }`}
-                 loading="lazy"
-                 onLoad={() => setImageLoaded(true)}
-                 onError={() => setImageError(true)}
-               />
-             </>
-           ) : (
-             <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
-               <div className="text-gray-400 text-sm text-center">
-                 <div>🖼️</div>
-                 <div>Image unavailable</div>
-               </div>
-             </div>
-           )}
-         </div>
+        {/* Project Image with optimized loading */}
+        <div className={`relative w-full ${isMobile ? 'h-48 mb-4' : 'h-56 mb-6'} rounded-t-lg overflow-hidden`}>
+          {shouldRenderImage ? (
+            <OptimizedImage
+              src={project.image}
+              alt={`Screenshot of ${project.title} project`}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            // Placeholder for non-visible cards
+            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+              <div className="text-gray-400 text-sm">🎬</div>
+            </div>
+          )}
+        </div>
 
         {/* Card Content */}
         <div className={`flex flex-col flex-1 ${isMobile ? 'px-4 pb-4' : 'px-6 pb-6'}`}>
@@ -158,7 +214,7 @@ const CarouselCard = React.memo(({ project, position, isMobile = false }) => {
               style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.9)" }}
               aria-label={`View live project: ${project.title}`}
             >
-              <span>View Live Project</span>
+              <span>View Project</span>
             </a>
           </div>
         </div>
@@ -214,7 +270,7 @@ const Projects = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNext, handlePrev]);
 
-  // Navigation button component to reduce duplication
+  // Navigation button component
   const NavButton = React.memo(({ direction, onClick, className = "", ariaLabel }) => (
     <button
       onClick={onClick}
@@ -236,18 +292,18 @@ const Projects = () => {
     >
       <h1 
         id="projects-heading"
-        className="text-gray-300 text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12"
+        className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12"
       >
-        My Projects
+        Our Portfolio
       </h1>
 
-      {/* Mobile Carousel Container - FIXED LAYOUT */}
+      {/* Mobile Carousel Container */}
       <div 
         className="block md:hidden relative w-full max-w-sm mx-auto"
         role="tabpanel"
         aria-label="Mobile project carousel"
       >
-        {/* Card Container - Separated from controls */}
+        {/* Card Container */}
         <div className="relative w-full h-[380px] overflow-hidden mb-6">
           <div className="absolute w-full h-full left-0 flex">
             {projects.map((project, index) => {
@@ -256,7 +312,7 @@ const Projects = () => {
 
               return (
                 <CarouselCard
-                  key={`mobile-${project.title}-${index}`}
+                  key={`mobile-${index}`} // Simplified key for better performance
                   project={project}
                   position={position}
                   isMobile={true}
@@ -266,7 +322,7 @@ const Projects = () => {
           </div>
         </div>
 
-        {/* Mobile Controls - COMPLETELY SEPARATE */}
+        {/* Mobile Controls */}
         <div className="flex items-center justify-center gap-6 mb-4">
           <NavButton 
             direction="prev" 
@@ -282,9 +338,9 @@ const Projects = () => {
           />
         </div>
 
-        {/* Mobile Indicators - SEPARATE */}
+        {/* Mobile Indicators */}
         <div className="flex justify-center space-x-2" role="tablist">
-          {projects.map((project, index) => (
+          {projects.map((_, index) => (
             <button
               key={`mobile-indicator-${index}`}
               onClick={() => goToSlide(index)}
@@ -295,7 +351,7 @@ const Projects = () => {
                 backgroundColor: index === currentIndex ? "#814AC8" : "rgba(255, 255, 255, 0.5)",
                 boxShadow: index === currentIndex ? "0 0 10px rgba(129, 74, 200, 0.7)" : "none",
               }}
-              aria-label={`Go to project ${index + 1}: ${project.title}`}
+              aria-label={`Go to project ${index + 1}`}
               role="tab"
               aria-selected={index === currentIndex}
               type="button"
@@ -317,7 +373,7 @@ const Projects = () => {
 
             return (
               <CarouselCard
-                key={`desktop-${project.title}-${index}`}
+                key={`desktop-${index}`} // Simplified key for better performance
                 project={project}
                 position={position}
                 isMobile={false}
@@ -326,7 +382,7 @@ const Projects = () => {
           })}
         </div>
 
-        {/* Controls - Desktop Only */}
+        {/* Desktop Controls */}
         <div className="hidden md:flex absolute bottom-4 w-[90%] max-w-5xl justify-between left-1/2 -translate-x-1/2">
           <NavButton 
             direction="prev" 
@@ -342,9 +398,9 @@ const Projects = () => {
           />
         </div>
 
-        {/* Indicators - Desktop Only */}
+        {/* Desktop Indicators */}
         <div className="hidden md:flex absolute bottom-16 left-1/2 -translate-x-1/2 space-x-2" role="tablist">
-          {projects.map((project, index) => (
+          {projects.map((_, index) => (
             <button
               key={`desktop-indicator-${index}`}
               onClick={() => goToSlide(index)}
@@ -355,7 +411,7 @@ const Projects = () => {
                 backgroundColor: index === currentIndex ? "#814AC8" : "rgba(255, 255, 255, 0.5)",
                 boxShadow: index === currentIndex ? "0 0 10px rgba(129, 74, 200, 0.7)" : "none",
               }}
-              aria-label={`Go to project ${index + 1}: ${project.title}`}
+              aria-label={`Go to project ${index + 1}`}
               role="tab"
               aria-selected={index === currentIndex}
               type="button"

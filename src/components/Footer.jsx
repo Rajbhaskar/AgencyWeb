@@ -69,9 +69,12 @@ const Footer = () => {
             <h4 className="text-base md:text-lg font-semibold text-white mb-2 md:mb-3">Services</h4>
             <ul className="space-y-1 md:space-y-2 text-sm">
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Web Development</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Mobile Apps</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Creative Design</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Brand Strategy</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Brand Identity</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Advertising</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Digital Presence</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">AI Solutions</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">App Development</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300 block py-0.5">Data & Cloud Services</a></li>
             </ul>
           </Motion.div>
 
