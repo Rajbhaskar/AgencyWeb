@@ -3,11 +3,11 @@ import React from "react";
 export default function Company() {
   const companies = [
     "Acme Corp",
-    "Globex",
-    "Initech",
-    "Umbrella",
-    "Stark Industries",
-    "Wayne Enterprises",
+    "Pepsi",
+    "Arogin",
+    "SeetiMaar Films",
+    "RR Constructions",
+    "Bhaskar Engineering",
   ];
 
   return (

@@ -1,23 +1,23 @@
 import React from "react";
 import { motion as Motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
-import serviceimg1 from "../assets/serviceimg1.jpg";
-import filmmaking from "../assets/filmmaking.jpg";
-import automation from "../assets/automation.jpg";
+import code from "../assets/code.jpeg";
+import code1 from "../assets/code1.jpeg";
+import automation from "../assets/automation.jpeg";
 
 const servicesData = [
   {
     title: "IT Solutions",
     description:
       "We design and develop modern websites, mobile apps, and tailored IT solutions that help businesses grow and stay ahead in the digital era.",
-    image: serviceimg1,
+    image: code1,
     alt: "IT Solutions",
   },
   {
     title: "Ad Films & Movies",
     description:
       "From cinematic ad films to AI-powered storytelling, we create compelling media that elevates brands and connects emotionally with audiences.",
-    image: filmmaking,
+    image: code,
     alt: "Ad Films",
   },
   {

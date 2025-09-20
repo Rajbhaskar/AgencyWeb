@@ -1,5 +1,7 @@
 import React from "react";
 import { motion as Motion } from "framer-motion";
+import { FaEnvelope, FaLinkedin, FaWhatsapp, FaInstagram } from 'react-icons/fa';
+import ScrollReveal from './ScrollReveal';
 
 const Contact = () => {
   const buttonVariants = {
@@ -9,6 +11,18 @@ const Contact = () => {
     },
     tap: {
       scale: 0.95
+    }
+  };
+
+  const handleEmailClick = () => {
+    try {
+      window.open('https://mail.google.com/mail/?view=cm&to=seetimaarfilms21@gmail.com&su=Portfolio%20Contact', '_blank');
+    } catch {
+      navigator.clipboard.writeText('seetimaarfilms21@gmail.com').then(() => {
+        alert('Email address copied to clipboard: seetimaarfilms21@gmail.com');
+      }).catch(() => {
+        prompt('Copy this email address:', 'seetimaarfilms21@gmail.com');
+      });
     }
   };
 
@@ -39,8 +53,8 @@ const Contact = () => {
         {/* Contact Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto">
           {/* Email Button */}
-          <Motion.a
-            href="mailto:your-email@example.com"
+          <Motion.button
+            onClick={handleEmailClick}
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
@@ -49,8 +63,6 @@ const Contact = () => {
             transition={{ duration: 0.7, delay: 0.4 }}
             viewport={{ once: true }}
             className="group flex flex-col items-center text-center bg-[#111] px-4 py-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-all duration-300 h-full"
-            target="_blank"
-            rel="noopener noreferrer"
           >
             {/* Email Icon */}
             <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:bg-blue-500/30 transition-colors duration-300 mb-4">
@@ -60,13 +72,13 @@ const Contact = () => {
             </div>
             <div>
               <h3 className="text-base md:text-lg font-semibold mb-2">Email Us</h3>
-              <p className="text-xs md:text-sm text-gray-400">bhaskarraj339@gmail.com</p>
+              <p className="text-xs md:text-sm text-gray-400">seetimaarfilms21@gmail.com</p>
             </div>
-          </Motion.a>
+          </Motion.button>
 
           {/* WhatsApp Button */}
           <Motion.a
-            href="https://wa.me/1234567890"
+            href="https://wa.me/9993035739"
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
@@ -86,13 +98,13 @@ const Contact = () => {
             </div>
             <div>
               <h3 className="text-base md:text-lg font-semibold mb-2">WhatsApp</h3>
-              <p className="text-xs md:text-sm text-gray-400">+91-9039030652</p>
+              <p className="text-xs md:text-sm text-gray-400">+91-9993035739</p>
             </div>
           </Motion.a>
 
           {/* LinkedIn Button */}
           <Motion.a
-            href="https://www.linkedin.com/in/yourprofile/"
+            href="https://www.linkedin.com/in/chitransh-bhaskar-025341218?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
@@ -136,7 +148,7 @@ const Contact = () => {
             </div>
             <div>
               <h3 className="text-base md:text-lg font-semibold mb-2">Call Us</h3>
-              <p className="text-xs md:text-sm text-gray-400">+91 - 9039030652</p>
+              <p className="text-xs md:text-sm text-gray-400">+91-8109127059</p>
             </div>
           </Motion.a>
         </div>
