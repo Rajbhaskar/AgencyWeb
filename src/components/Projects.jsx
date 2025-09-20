@@ -294,7 +294,7 @@ const Projects = () => {
         id="projects-heading"
         className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12"
       >
-        Our Portfolio
+        ShowCase
       </h1>
 
       {/* Mobile Carousel Container */}
